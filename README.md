@@ -120,7 +120,7 @@ QuickBite-Backend/
 3. **Configure environment variables**
    Create a `.env` file in the root directory:
    ```env
-   PORT=3000
+   PORT=5000
    MONGODB_URI=mongodb://localhost:27017/quickbite
    NODE_ENV=development
    ```
@@ -128,13 +128,7 @@ QuickBite-Backend/
 4. **Start MongoDB**
    Make sure MongoDB is running on your system.
 
-5. **Seed the database** (optional but recommended)
-   ```bash
-   npm run seed
-   ```
-   This will populate the database with sample customers, restaurants, items, delivery zones, and promotions.
-
-6. **Start the server**
+5. **Start the server**
    ```bash
    npm start
    ```
@@ -143,8 +137,8 @@ QuickBite-Backend/
    npm run dev
    ```
 
-7. **Verify the server is running**
-   Visit `http://localhost:3000` to see the API information.
+6. **Verify the server is running**
+   Visit `http://localhost:5000` to see the API information.
 
 ## 📡 API Endpoints
 
@@ -549,7 +543,7 @@ async calculateDeliveryFee(..., customerCurrency = 'PKR') {
 
 **Create an Order:**
 1. Method: `POST`
-2. URL: `http://localhost:3000/v1/orders`
+2. URL: `http://localhost:5000/v1/orders`
 3. Headers:
    - `Content-Type: application/json`
    - `Authorization: Bearer <YOUR_JWT_TOKEN>`
@@ -569,7 +563,7 @@ async calculateDeliveryFee(..., customerCurrency = 'PKR') {
 
 **Get Order:**
 1. Method: `GET`
-2. URL: `http://localhost:3000/v1/orders/ORD-20251209-12345` or `http://localhost:3000/v1/orders/<orderId>`
+2. URL: `http://localhost:5000/v1/orders/ORD-20251209-12345` or `http://localhost:5000/v1/orders/<orderId>`
 3. Headers:
    - `Authorization: Bearer <YOUR_JWT_TOKEN>`
 
@@ -577,7 +571,7 @@ async calculateDeliveryFee(..., customerCurrency = 'PKR') {
 
 **Create an Order:**
 ```bash
-curl -X POST http://localhost:3000/v1/orders \
+curl -X POST http://localhost:5000/v1/orders \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <YOUR_JWT_TOKEN>" \
   -d '{
@@ -595,7 +589,7 @@ curl -X POST http://localhost:3000/v1/orders \
 
 **Get Order:**
 ```bash
-curl -X GET http://localhost:3000/v1/orders/ORD-20251209-12345 \
+curl -X GET http://localhost:5000/v1/orders/ORD-20251209-12345 \
   -H "Authorization: Bearer <YOUR_JWT_TOKEN>"
 ```
 

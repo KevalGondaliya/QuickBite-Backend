@@ -7,9 +7,9 @@ const Item = require('../models/Item');
 const DeliveryZone = require('../models/DeliveryZone');
 const Promotion = require('../models/Promotion');
 const { generateOrderNumber } = require('../utils/orderHelper');
-const { calculateDistance } = require('../utils/distanceCalculator');
 const { getPeakMultiplier } = require('../utils/dateHelper');
 const AppError = require('../utils/AppError');
+const turf = require('@turf/turf');
 
 exports.createOrder = catchAsync(async (req, res, next) => {
   const { customerId, restaurantId, items, promoCode } = req.body;
@@ -67,12 +67,10 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   const orderDate = new Date();
   
   // Calculate distance
-  const distanceKm = calculateDistance(
-    restaurant.location.lat,
-    restaurant.location.lng,
-    customer.location.lat,
-    customer.location.lng
-  );
+  const distance = turf.distance(turf.point(restaurant.location.coordinates), turf.point(customer.location.coordinates), { units: "kilometers" });
+
+  console.log('distance :', distance);
+  const distanceKm = Number(distance.toFixed(2));
 
   // Get zone pricing rules
   const zone = await DeliveryZone.findOne({

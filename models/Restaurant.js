@@ -12,14 +12,22 @@ const restaurantSchema = new mongoose.Schema(
       required: true,
     },
     location: {
-      lat: {
-        type: Number,
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point',
         required: true,
       },
-      lng: {
-        type: Number,
-        required: true,
-      },
+      coordinates: [
+        {
+          type: Number,
+          required: true,
+        },
+        {
+          type: Number,
+          required: true,
+        }
+      ]
     },
     zone: {
       type: String,
@@ -35,6 +43,8 @@ const restaurantSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+restaurantSchema.index({ location: '2dsphere' });
 
 // Generate restaurantId before saving
 restaurantSchema.pre('save', async function (next) {

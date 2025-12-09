@@ -19,11 +19,6 @@ exports.createRestaurant = catchAsync(async (req, res, next) => {
     return next(new AppError('Invalid zone. Must be Urban, Suburban, or Remote', 400));
   }
 
-  // Validate location
-  if (!location.lat || !location.lng) {
-    return next(new AppError('Please provide valid location (lat and lng)', 400));
-  }
-
   // Check if restaurant with same name already exists
   const existingRestaurant = await Restaurant.findOne({ name });
   if (existingRestaurant) {

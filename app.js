@@ -41,12 +41,12 @@ app.get('/', (req, res) => {
   return response(res, 200, true, 'API is running');
 });
 
-app.use('/v1/auth', authRoutes);
-app.use('/v1/restaurants', restaurantRoutes);
-app.use('/v1/delivery-zones', deliveryZoneRoutes);
-app.use('/v1/items', itemRoutes);
-app.use('/v1/promotions', promotionRoutes);
-app.use('/v1/orders', orderRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/restaurants', restaurantRoutes);
+app.use('/api/v1/delivery-zones', deliveryZoneRoutes);
+app.use('/api/v1/items', itemRoutes);
+app.use('/api/v1/promotions', promotionRoutes);
+app.use('/api/v1/orders', orderRoutes);
 
 app.use(errorHandler);
 
@@ -54,7 +54,7 @@ app.use((req, res) => {
   return response(res, 404, false, 'Route not found', null);
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

@@ -27,14 +27,22 @@ const customerSchema = new mongoose.Schema(
       select: false, // Don't return password by default
     },
     location: {
-      lat: {
-        type: Number,
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point',
         required: true,
       },
-      lng: {
-        type: Number,
-        required: true,
-      },
+      coordinates: [
+        {
+          type: Number,
+          required: true,
+        },
+        {
+          type: Number,
+          required: true,
+        }
+      ]
     },
     zone: {
       type: String,
@@ -54,6 +62,8 @@ const customerSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+customerSchema.index({ location: '2dsphere' });
 
 // Generate customerId before saving
 customerSchema.pre('save', async function (next) {
