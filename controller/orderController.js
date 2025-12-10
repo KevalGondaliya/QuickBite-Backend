@@ -12,7 +12,8 @@ const AppError = require('../utils/AppError');
 const turf = require('@turf/turf');
 
 exports.createOrder = catchAsync(async (req, res, next) => {
-  const { customerId, restaurantId, items, promoCode } = req.body;
+  const { restaurantId, items, promoCode } = req.body;
+  const customerId = req.customer._id;
 
   // Validate and fetch customer
   const customer = await Customer.findById({ _id :customerId });
