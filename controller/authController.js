@@ -18,7 +18,6 @@ const createSendToken = (customer, statusCode, res, message) => {
       email: customer.email,
       location: customer.location,
       zone: customer.zone,
-      isFirstOrder: customer.isFirstOrder,
     },
     token,
   });
@@ -92,7 +91,6 @@ exports.getMe = catchAsync(async (req, res, next) => {
       email: customer.email,
       location: customer.location,
       zone: customer.zone,
-      isFirstOrder: customer.isFirstOrder,
       createdAt: customer.createdAt,
     },
   });

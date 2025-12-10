@@ -69,7 +69,6 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   // Calculate distance
   const distance = turf.distance(turf.point(restaurant.location.coordinates), turf.point(customer.location.coordinates), { units: "kilometers" });
 
-  console.log('distance :', distance);
   const distanceKm = Number(distance.toFixed(2));
 
   // Get zone pricing rules
@@ -140,23 +139,6 @@ exports.createOrder = catchAsync(async (req, res, next) => {
       );
     }
 
-    // Validate type-specific conditions
-    if (promo.type === 'first_order') {
-      if (!customer.isFirstOrder) {
-        return next(
-          new AppError('This promotion is only valid for first-time customers', 400)
-        );
-      }
-    }
-
-    if (promo.type === 'restaurant_specific' && promo.restaurantId !== restaurant.restaurantId) {
-      return next(new AppError('This promotion is not valid for this restaurant', 400));
-    }
-
-    if (promo.type === 'zone_specific' && promo.zoneType !== customer.zone) {
-      return next(new AppError('This promotion is not valid for this delivery zone', 400));
-    }
-
     // Calculate discount
     let discountAmount = 0;
     if (promo.discountType === 'percentage') {
@@ -203,17 +185,6 @@ exports.createOrder = catchAsync(async (req, res, next) => {
     totalAmount: Math.round(totalAmount * 100) / 100,
     status: 'pending',
   });
-
-  // Update customer's first order flag
-  if (customer.isFirstOrder) {
-    await Customer.findOneAndUpdate({ customerId }, { isFirstOrder: false });
-  }
-
-  // Remove _id from items array - convert Mongoose subdocuments to plain objects
-  const itemsWithoutId = order.items.map((item) => ({
-    itemId: item.itemId,
-    quantity: item.quantity,
-  }));
 
   return response(res, 201, true, 'Order created successfully', order);
 });

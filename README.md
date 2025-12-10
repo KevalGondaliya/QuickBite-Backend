@@ -48,7 +48,7 @@ Controller Layer → Service Layer → Model Layer
 3. **Services** (`/services`): Contain business logic (pricing, promotions, order processing)
 4. **Models** (`/models`): Define database schemas and data structures
 5. **Middleware** (`/middleware`): Request validation, error handling
-6. **Utils** (`/utils`): Helper functions (distance calculation, date helpers)
+6. **Utils** (`/utils`): Helper functions (Error handler, date helpers)
 
 ## 🛠️ Tech Stack
 
@@ -56,48 +56,6 @@ Controller Layer → Service Layer → Model Layer
 - **Framework**: Express.js
 - **Database**: MongoDB with Mongoose ODM
 - **Environment**: dotenv for configuration
-
-## 📁 Project Structure
-
-```
-QuickBite-Backend/
-├── app.js                      # Main application entry point
-├── package.json                # Dependencies and scripts
-├── .env                        # Environment variables
-├── .gitignore                  # Git ignore rules
-├── README.md                   # This file
-│
-├── models/                     # Database models
-│   ├── Customer.js
-│   ├── Restaurant.js
-│   ├── Item.js
-│   ├── Order.js
-│   ├── DeliveryZone.js
-│   └── Promotion.js
-│
-├── routes/                     # API routes
-│   └── orderRoutes.js
-│
-├── controller/                 # Request handlers
-│   └── orderController.js
-│
-├── services/                   # Business logic layer
-│   ├── OrderService.js
-│   ├── PricingService.js
-│   └── PromoService.js
-│
-├── middleware/                 # Middleware functions
-│   ├── errorHandler.js
-│   └── validator.js
-│
-├── utils/                      # Utility functions
-│   ├── distanceCalculator.js
-│   ├── dateHelper.js
-│   └── orderHelper.js
-│
-└── scripts/                    # Utility scripts
-    └── seedData.js             # Database seeding script
-```
 
 ## 🚀 Setup & Installation
 
@@ -123,6 +81,8 @@ QuickBite-Backend/
    PORT=5000
    MONGODB_URI=mongodb://localhost:27017/quickbite
    NODE_ENV=development
+   JWT_SECRET=your-secret
+   JWT_EXPIRES_IN=7d
    ```
 
 4. **Start MongoDB**
@@ -140,145 +100,6 @@ QuickBite-Backend/
 6. **Verify the server is running**
    Visit `http://localhost:5000` to see the API information.
 
-## 📡 API Endpoints
-
-### 1. Create Order
-**POST** `/v1/orders`
-
-Creates a new order with dynamic pricing calculation. Requires authentication.
-
-**Request Headers:**
-```
-Authorization: Bearer <JWT_TOKEN>
-Content-Type: application/json
-```
-
-**Request Body:**
-```json
-{
-  "customerId": "CUST-001",
-  "restaurantId": "6937d14576ea818b22e8c433",
-  "items": [
-    {
-      "itemId": "6937f0cebe55b5357f4522f9",
-      "qty": 2
-    },
-    {
-      "itemId": "6937f0cebe55b5357f4522f0",
-      "qty": 1
-    }
-  ],
-  "promoCode": "FIRST50"
-}
-```
-
-**Field Descriptions:**
-- `customerId` (required): Customer ID string (e.g., "CUST-001")
-- `restaurantId` (required): Restaurant MongoDB ObjectId or restaurantId string
-- `items` (required): Array of items with `itemId` (MongoDB ObjectId) and `qty` (quantity)
-- `promoCode` (optional): Promotion code string
-
-**Response:**
-```json
-{
-  "success": true,
-  "message": "Order created successfully",
-  "data": {
-    "orderNumber": "ORD-20251209-12345",
-    "orderId": "69380c68811648fd783832cf",
-    "userId": "6937cc5f946201b1b305ba51",
-    "restaurantId": "6937d14576ea818b22e8c433",
-    "items": [
-      {
-        "itemId": "6937f0cebe55b5357f4522f9",
-        "quantity": 2
-      },
-      {
-        "itemId": "6937f0cebe55b5357f4522f0",
-        "quantity": 1
-      }
-    ],
-    "deliveryZone": "Suburban",
-    "distanceKm": 4.61,
-    "basePrice": 450,
-    "deliveryFee": 280.5,
-    "zoneBaseFee": 50,
-    "distanceCost": 230.5,
-    "peakMultiplier": 1,
-    "peakSurcharge": 0,
-    "promoDiscount": 0,
-    "promoCode": null,
-    "totalAmount": 730.5,
-    "status": "pending"
-  }
-}
-```
-
-### 2. Get Order Details
-**GET** `/v1/orders/:id`
-
-Retrieves order details by order ID (MongoDB ObjectId) or order number. Requires authentication.
-
-**Request Headers:**
-```
-Authorization: Bearer <JWT_TOKEN>
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "message": "Order get successfully",
-  "data": {
-    "order": {
-      "orderNumber": "ORD-20251209-12345",
-      "orderId": "69380c68811648fd783832cf",
-      "userId": "6937cc5f946201b1b305ba51",
-      "restaurantId": "6937d14576ea818b22e8c433",
-      "items": [
-        {
-          "itemId": "6937f0cebe55b5357f4522f9",
-          "name": "Chicken Burger",
-          "price": 450,
-          "quantity": 1
-        }
-      ],
-      "deliveryZone": "Suburban",
-      "distanceKm": 4.61,
-      "basePrice": 450,
-      "deliveryFee": 280.5,
-      "zoneBaseFee": 50,
-      "distanceCost": 230.5,
-      "peakMultiplier": 1,
-      "peakSurcharge": 0,
-      "promoDiscount": 0,
-      "promoCode": null,
-      "totalAmount": 730.5,
-      "status": "pending",
-      "createdAt": "2025-12-09T11:50:14.056Z",
-      "updatedAt": "2025-12-09T11:50:14.056Z"
-    },
-    "customer": {
-      "name": "Test User",
-      "email": "test@gmail.com",
-      "location": {
-        "lat": 24.9,
-        "lng": 66.99
-      },
-      "zone": "Suburban"
-    },
-    "restaurant": {
-      "name": "KFC Gulshan",
-      "location": {
-        "lat": 24.88,
-        "lng": 67.03
-      },
-      "zone": "Suburban"
-    }
-  }
-}
-```
-
 ## 🗄️ Database Schema
 
 ### Models Overview
@@ -289,36 +110,6 @@ Authorization: Bearer <JWT_TOKEN>
 4. **Order**: Complete order information with all pricing details
 5. **DeliveryZone**: Zone pricing rules (base fee, per km rate)
 6. **Promotion**: Promotion rules and eligibility criteria
-
-### Order Schema Structure
-
-```javascript
-{
-  orderNumber: String (unique),      // Human-readable order ID (e.g., "ORD-20251209-12345")
-  userId: ObjectId,                  // Reference to Customer (for querying by logged-in user)
-  restaurantId: ObjectId,            // Reference to Restaurant
-  items: [                           // Array of order items
-    {
-      itemId: ObjectId,              // Reference to Item
-      quantity: Number              // Quantity ordered
-    }
-  ],
-  deliveryZone: String,              // "Urban" | "Suburban" | "Remote"
-  distanceKm: Number,                // Calculated distance in kilometers
-  basePrice: Number,                 // Total price of all items
-  deliveryFee: Number,               // Final delivery fee
-  zoneBaseFee: Number,               // Base fee for the zone
-  distanceCost: Number,              // Cost based on distance
-  peakMultiplier: Number,            // Peak time multiplier (1.0, 1.2, 1.3, or 1.4)
-  peakSurcharge: Number,             // Extra charge during peak times
-  promoDiscount: Number,             // Discount from promotion
-  promoCode: String,                 // Applied promotion code
-  totalAmount: Number,               // Final total amount
-  status: String,                    // Order status
-  createdAt: Date,                   // Order creation timestamp
-  updatedAt: Date                    // Last update timestamp
-}
-```
 
 ### Key Relationships
 - Items belong to Restaurants (via `restaurantId` ObjectId)
@@ -375,41 +166,19 @@ Delivery Fee = (35 + (12.34 × 3.2)) × 1.0
 
 ### Promotion Types
 
-1. **First Order Discount** (`first_order`)
-   - Valid only for first-time customers
-   - Example: 50% off up to 200
-
-2. **Restaurant-Specific** (`restaurant_specific`)
+1. **Restaurant-Specific** (`restaurant_specific`)
    - Valid only for specific restaurants
    - Example: 20% off at Burger King
 
-3. **Zone-Specific** (`zone_specific`)
+2. **Zone-Specific** (`zone_specific`)
    - Valid only for specific delivery zones
    - Example: 15% off in Suburban zone
 
-4. **Percentage Discount** (`percentage`)
+3. **Percentage Discount** (`percentage`)
    - Percentage-based discount with optional max limit
 
-5. **Fixed Amount Discount** (`fixed_amount`)
+4. **Fixed Amount Discount** (`fixed_amount`)
    - Fixed amount discount
-
-### Promotion Validation
-
-The system validates:
-- ✅ Promotion code exists and is active
-- ✅ Promotion is within validity dates
-- ✅ Usage limit not exceeded
-- ✅ Minimum order amount met
-- ✅ Type-specific eligibility (first order, restaurant, zone)
-- ✅ Discount doesn't exceed order amount
-
-### How to Add New Promotion Types
-
-The system is designed to be extensible. To add new promotion types:
-
-1. Add the new type to the `Promotion` model enum
-2. Add validation logic in `PromoService.validateAndApplyPromo()`
-3. Update the promotion creation logic
 
 ## 🧗 Bonus Questions
 
@@ -537,68 +306,6 @@ async calculateDeliveryFee(..., customerCurrency = 'PKR') {
 - Convert at display/calculation time
 - Cache exchange rates for performance
 
-## 🧪 Testing the API
-
-### Using Postman
-
-**Create an Order:**
-1. Method: `POST`
-2. URL: `http://localhost:5000/v1/orders`
-3. Headers:
-   - `Content-Type: application/json`
-   - `Authorization: Bearer <YOUR_JWT_TOKEN>`
-4. Body (raw JSON):
-```json
-{
-  "customerId": "CUST-001",
-  "restaurantId": "6937d14576ea818b22e8c433",
-  "items": [
-    {
-      "itemId": "6937f0cebe55b5357f4522f9",
-      "qty": 1
-    }
-  ]
-}
-```
-
-**Get Order:**
-1. Method: `GET`
-2. URL: `http://localhost:5000/v1/orders/ORD-20251209-12345` or `http://localhost:5000/v1/orders/<orderId>`
-3. Headers:
-   - `Authorization: Bearer <YOUR_JWT_TOKEN>`
-
-### Using cURL
-
-**Create an Order:**
-```bash
-curl -X POST http://localhost:5000/v1/orders \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR_JWT_TOKEN>" \
-  -d '{
-    "customerId": "CUST-001",
-    "restaurantId": "6937d14576ea818b22e8c433",
-    "items": [
-      {
-        "itemId": "6937f0cebe55b5357f4522f9",
-        "qty": 1
-      }
-    ],
-    "promoCode": "FIRST50"
-  }'
-```
-
-**Get Order:**
-```bash
-curl -X GET http://localhost:5000/v1/orders/ORD-20251209-12345 \
-  -H "Authorization: Bearer <YOUR_JWT_TOKEN>"
-```
-
-### Using Postman
-
-1. Import the endpoints
-2. Use the sample request body from the API documentation above
-3. Test with different scenarios (peak time, promotions, different zones)
-
 ## 📝 Notes
 
 - **Authentication**: Order routes require JWT authentication via `Authorization: Bearer <token>` header
@@ -613,24 +320,3 @@ curl -X GET http://localhost:5000/v1/orders/ORD-20251209-12345 \
 - **Items Response**: When retrieving orders, items include `name` and `price` (populated from Item collection)
 - **Pricing Fields**: All pricing fields are stored separately (not nested in `feeBreakdown`)
 - **Promotions**: Validated before application with comprehensive eligibility checks
-- **First Order Flag**: Customer's `isFirstOrder` flag is automatically updated after first order
-
-## 🔮 Future Enhancements
-
-- [ ] Order status management endpoints
-- [ ] Restaurant and customer management APIs
-- [ ] Analytics and reporting
-- [ ] Real-time order tracking
-- [ ] Integration with payment gateways
-- [ ] Email/SMS notifications
-- [ ] Rate limiting and API authentication
-- [ ] Caching layer for frequently accessed data
-- [ ] GraphQL API option
-
-## 📄 License
-
-This project is created for assignment purposes.
-
----
-
-**Built with ❤️ for QuickBite Food Delivery System**

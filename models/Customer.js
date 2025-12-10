@@ -49,10 +49,6 @@ const customerSchema = new mongoose.Schema(
       enum: ['Urban', 'Suburban', 'Remote'],
       required: true,
     },
-    isFirstOrder: {
-      type: Boolean,
-      default: true,
-    },
     isActive: {
       type: Boolean,
       default: true,
